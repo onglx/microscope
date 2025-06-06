@@ -23,16 +23,16 @@ This monorepo (using turbo repo and pnpm workspaces) code should be structured a
             - `operator/` for the Kubernetes operator code
             - `lambda/` for the AWS Lambda code
         - `examples/` for examples of how to use the SDK in various environments
-- `packages/core/src` for the core SDK code
+- `packages/core/src` for the core code
     - `services/` for the core logger interfaces and implementations, grouped by domain
         - `sinks/` for each pluggable sink (CloudWatch, Sentry, File)
         - `query/` for JSONata query engine files
         - `buffer/` for the ring buffer and buffer manager
         - `tracing/` for span/tracer implementations
 - `packages/shared/src/`
-    - `utils/` for shared utilities (e.g., hashing, token counting)
-    - `types/` for shared TypeScript interfaces (e.g., `TelemetryEvent`, `SpanAttributes`, `SinkConfig`)
-    - `constants/` for constants (e.g., `MAX_SPAN_ATTRIBUTES`)
+    - `utils/` for shared utilities (e.g., hashing, token counting) [every monorepo utils should be here]
+    - `types/` for shared TypeScript interfaces (e.g., `TelemetryEvent`, `SpanAttributes`, `SinkConfig`) [every monorepo types should be here]
+    - `constants/` for constants (e.g., `MAX_SPAN_ATTRIBUTES`) [every monorepo constant should be here]
 Use best practices: a Singleton pattern for the `BufferManager`, a Strategy pattern for `Transport`/`Sink`, and proper TypeScript typings throughout. Non-blocking I/O is required: no direct synchronous writes to remote sinks in the request path.
 
 Keep imports and exports consistent so that `index.ts` (at the project root) can re-export everything cleanly.
