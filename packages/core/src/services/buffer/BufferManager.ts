@@ -1,18 +1,23 @@
 import { TelemetryEvent } from '@microscope/shared/src/types/ILogger';
 import { Transport } from '@microscope/shared/src/types/Transport';
+import { RingBuffer } from './RingBuffer';
 
 /**
- * Singleton class that manages a buffer of telemetry events and handles flushing to transports
+ * Singleton class that manages a ring buffer of telemetry events and handles flushing to transports
  */
 export class BufferManager {
   private static instance: BufferManager;
-  private buffer: TelemetryEvent[] = [];
-  private readonly maxBufferSize: number = 1000;
-  private flushInterval: number = 5000; // 5 seconds
+  private ringBuffer: RingBuffer<TelemetryEvent>;
+  private flushInterval: number;
   private transports: Transport[] = [];
+  private BUFFER_SIZE: number = 1000;
+  private INTERVAL_TIME: number = 5000; // 5 seconds
+  private MAX_BATCH_SIZE: number = 50;
+
 
   private constructor() {
-    this.startFlushTimer();
+    this.ringBuffer = new RingBuffer<TelemetryEvent>(this.BUFFER_SIZE);
+    this.flushInterval = setInterval(() => this.flush(), this.INTERVAL_TIME);
   }
 
   /**
@@ -42,40 +47,33 @@ export class BufferManager {
   }
 
   /**
-   * Push a new event to the buffer
+   * Push a new event to the ring buffer
    * @param event - The telemetry event to add
    */
   public pushEvent(event: TelemetryEvent): void {
-    this.buffer.push(event);
-    if (this.buffer.length >= this.maxBufferSize) {
-      this.flush();
-    }
+    this.ringBuffer.push(event);
   }
 
   /**
-   * Flush the buffer to all configured transports
+   * Flush the ring buffer to all configured transports
+   * Processes events in batches of up to 50 events
    */
   private async flush(): Promise<void> {
-    if (this.buffer.length === 0 || this.transports.length === 0) {
-      return;
+    const batch: TelemetryEvent[] = [];
+
+    // Pop up to maxBatchSize events from the ring buffer
+    while (batch.length < this.MAX_BATCH_SIZE) {
+      const event = this.ringBuffer.pop();
+      if (!event) break;
+      batch.push(event);
     }
 
-    const events = [...this.buffer];
-    this.buffer = [];
+    // If we have events to process, send them to all configured sinks
+    if (batch.length > 0 && this.transports.length > 0) {
+      await Promise.allSettled(
+        this.transports.map(transport => transport.sendBatch(batch))
+      );
+    }
 
-    await Promise.all(
-      this.transports.map(transport => transport.sendBatch(events))
-    ).catch(error => {
-      console.error('Error flushing events:', error);
-      // Re-add events to buffer on error
-      this.buffer = [...events, ...this.buffer];
-    });
-  }
-
-  /**
-   * Start the flush timer
-   */
-  private startFlushTimer(): void {
-    setInterval(() => this.flush(), this.flushInterval);
   }
 }

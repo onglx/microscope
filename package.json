@@ -10,7 +10,7 @@
     "test": "turbo run test"
   },
   "devDependencies": {
-    "turbo": "^1.12.4"
+    "turbo": "^2.5.4"
   },
   "packageManager": "pnpm@10.11.1",
   "engines": {
