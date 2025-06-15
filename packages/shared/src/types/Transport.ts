@@ -1,14 +1,17 @@
-import { TelemetryEvent } from './ILogger';
+import { Logger } from './Logger';
 
-/**
- * Transport interface for implementing pluggable sink strategies
- * Handles batched telemetry event delivery to various destinations
- */
-export interface Transport {
+
+export namespace Transport {
   /**
-   * Sends a batch of telemetry events to the configured destination
-   * @param events - Array of telemetry events to be sent
-   * @returns Promise that resolves when the batch has been sent
+   * Transport interface for implementing pluggable sink strategies
+   * Handles batched telemetry event delivery to various destinations
    */
-  sendBatch(events: TelemetryEvent[]): Promise<void>;
+  export interface Transport {
+    /**
+     * Sends a batch of telemetry events to the configured destination
+     * @param events - Array of telemetry events to be sent
+     * @returns Promise that resolves when the batch has been sent
+     */
+    sendBatch(events: Logger.TelemetryEvent[]): Promise<void>;
+  }
 }

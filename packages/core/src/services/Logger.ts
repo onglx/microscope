@@ -1,15 +1,14 @@
-import { LogLevel, ILogger, TelemetryEvent } from '@microscope/shared/src/types/ILogger';
-import { Transport } from '@microscope/shared/src/types/Transport';
+import { Types } from '@microscope/shared';
 import { BufferManager } from './buffer/BufferManager';
 
 /**
  * Implementation of the ILogger interface that manages transports and event buffering
  */
-export class Logger implements ILogger {
-  private transports: Transport[] = [];
+export class Logger implements Types.Logger.ILogger {
+  private transports: Types.Transport.Transport[] = [];
   private bufferManager: BufferManager;
 
-  constructor(transports: Transport[] = []) {
+  constructor(transports: Types.Transport.Transport[] = []) {
     this.transports = transports;
     this.bufferManager = BufferManager.getInstance();
     // Initialize buffer manager with the same transports
@@ -20,7 +19,7 @@ export class Logger implements ILogger {
    * Add a transport to the logger
    * @param transport - The transport instance to add
    */
-  public addTransport(transport: Transport): void {
+  public addTransport(transport: Types.Transport.Transport): void {
     this.transports.push(transport);
     this.bufferManager.addTransport(transport);
   }
@@ -29,7 +28,7 @@ export class Logger implements ILogger {
    * Set all transports for the logger
    * @param transports - Array of transport instances
    */
-  public setTransports(transports: Transport[]): void {
+  public setTransports(transports: Types.Transport.Transport[]): void {
     this.transports = transports;
     this.bufferManager.setTransports(transports);
   }
@@ -40,8 +39,8 @@ export class Logger implements ILogger {
    * @param message - The message to log
    * @param metadata - Optional additional contextual information
    */
-  public log(level: LogLevel, message: string, metadata: Record<string, any> = {}): void {
-    const event: TelemetryEvent = {
+  public log(level: Types.Logger.LogLevel, message: string, metadata: Record<string, any> = {}): void {
+    const event: Types.Logger.TelemetryEvent = {
       timestamp: Date.now(),
       name: level,
       attributes: {
@@ -59,7 +58,7 @@ export class Logger implements ILogger {
    * @param metadata - Optional additional contextual information
    */
   public debug(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.DEBUG, message, metadata);
+    this.log(Types.Logger.LogLevel.DEBUG, message, metadata);
   }
 
   /**
@@ -68,7 +67,7 @@ export class Logger implements ILogger {
    * @param metadata - Optional additional contextual information
    */
   public info(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.INFO, message, metadata);
+    this.log(Types.Logger.LogLevel.INFO, message, metadata);
   }
 
   /**
@@ -77,7 +76,7 @@ export class Logger implements ILogger {
    * @param metadata - Optional additional contextual information
    */
   public warn(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.WARN, message, metadata);
+    this.log(Types.Logger.LogLevel.WARN, message, metadata);
   }
 
   /**
@@ -86,6 +85,6 @@ export class Logger implements ILogger {
    * @param metadata - Optional additional contextual information
    */
   public error(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.ERROR, message, metadata);
+    this.log(Types.Logger.LogLevel.ERROR, message, metadata);
   }
 }

@@ -12,9 +12,9 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
@@ -23,7 +23,11 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "clean": "pnpm clean:build && pnpm clean:cache && pnpm clean:deps",
+    "clean:build": "rm -rf dist",
+    "clean:cache": "rm -rf .turbo",
+    "clean:deps": "rm -rf node_modules"
   },
   "dependencies": {
     "zod": "^3.22.4",

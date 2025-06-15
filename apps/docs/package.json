@@ -8,7 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "clean": "pnpm clean:build && pnpm clean:cache && pnpm clean:deps",
+    "clean:build": "rm -rf dist",
+    "clean:cache": "rm -rf .turbo",
+    "clean:deps": "rm -rf node_modules"
   },
   "dependencies": {
     "@microscope/ui": "workspace:*",

@@ -1,12 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Types } from '@microscope/shared';
 import { BufferManager } from '../../../src/services/buffer/BufferManager';
-import type { TelemetryEvent } from '@microscope/shared/src/types/ILogger';
-import type { Transport } from '@microscope/shared/src/types/Transport';
 
 function createMockTransport() {
   return {
     sendBatch: vi.fn().mockResolvedValue(undefined),
-  } as unknown as Transport;
+  } as unknown as Types.Transport.Transport;
 }
 
 describe('BufferManager', () => {
@@ -40,7 +39,7 @@ describe('BufferManager', () => {
   });
 
   it('should push events to the buffer', () => {
-    const event: TelemetryEvent = { timestamp: Date.now(), name: 'test', attributes: {} };
+    const event: Types.Logger.TelemetryEvent = { timestamp: Date.now(), name: 'test', attributes: {} };
     bufferManager.pushEvent(event);
     // @ts-expect-error: private property
     expect(bufferManager.ringBuffer.size()).toBe(1);

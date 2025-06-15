@@ -54,47 +54,69 @@
       "outputs": ["test-results/**"],
       "cache": true
     },
-    "assistant#dev": {
+    "@microscope/typescript-sdk#dev": {
+      "dependsOn": [
+        "@microscope/core#build",
+        "@microscope/shared#build"
+      ],
+      "outputs": ["dist/**"]
+    },
+    "api#dev": {
+      "dependsOn": [
+        "@microscope/core#build",
+        "@microscope/shared#build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "cli#dev": {
+      "dependsOn": [
+        "@microscope/core#build",
+        "@microscope/shared#build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "docs#dev": {
       "dependsOn": [
         "@microscope/shared#build",
-        "@microscope/core#build",
-        "@microscope/ai#build",
-        "@microscope/db#build",
         "@microscope/ui#build"
       ],
       "cache": false,
       "persistent": true
     },
-    "@microscope/core#build": {
+    "viewer#dev": {
       "dependsOn": [
+        "@microscope/core#build",
         "@microscope/shared#build",
-        "@microscope/db#build"
+        "@microscope/ui#build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "@microscope/db#build": {
+      "dependsOn": [
+        "@microscope/shared#build"
       ],
       "outputs": ["dist/**"]
     },
-    "@microscope/db#build": {
-      "dependsOn": ["@microscope/shared#build"],
-      "outputs": ["dist/**"]
-    },
     "@microscope/ui#build": {
-      "dependsOn": ["@microscope/shared#build", "@microscope/core#build"],
+      "dependsOn": [
+        "@microscope/shared#build",
+        "@microscope/core#build"
+      ],
       "outputs": ["dist/**"]
     },
-    "@microscope/ai#build": {
-      "dependsOn": ["@microscope/shared#build"],
+    "@microscope/core#build": {
+      "dependsOn": [
+        "@microscope/db#build",
+        "@microscope/shared#build"
+      ],
       "outputs": ["dist/**"]
     },
-    "//#db": {
-      "dependsOn": ["@microscope/shared#build"]
-    },
-    "//#ui": {
-      "dependsOn": ["@microscope/shared#build", "@microscope/core#build"]
-    },
-    "//#ai": {
-      "dependsOn": ["@microscope/shared#build"]
-    },
-    "//#core": {
-      "dependsOn": ["@microscope/shared#build", "@microscope/db#build"]
+    "@microscope/shared#build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
     }
   }
 }

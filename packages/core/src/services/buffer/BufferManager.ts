@@ -1,5 +1,4 @@
-import { TelemetryEvent } from '@microscope/shared/src/types/ILogger';
-import { Transport } from '@microscope/shared/src/types/Transport';
+import { Types } from '@microscope/shared';
 import { RingBuffer } from './RingBuffer';
 
 /**
@@ -7,16 +6,16 @@ import { RingBuffer } from './RingBuffer';
  */
 export class BufferManager {
   private static instance: BufferManager;
-  private ringBuffer: RingBuffer<TelemetryEvent>;
-  private flushInterval: number;
-  private transports: Transport[] = [];
+  private ringBuffer: RingBuffer<Types.Logger.TelemetryEvent>;
+  private flushInterval: NodeJS.Timeout;
+  private transports: Types.Transport.Transport[] = [];
   private BUFFER_SIZE: number = 1000;
   private INTERVAL_TIME: number = 5000; // 5 seconds
   private MAX_BATCH_SIZE: number = 50;
 
 
   private constructor() {
-    this.ringBuffer = new RingBuffer<TelemetryEvent>(this.BUFFER_SIZE);
+    this.ringBuffer = new RingBuffer<Types.Logger.TelemetryEvent>(this.BUFFER_SIZE);
     this.flushInterval = setInterval(() => this.flush(), this.INTERVAL_TIME);
   }
 
@@ -34,7 +33,7 @@ export class BufferManager {
    * Add a transport to the buffer manager
    * @param transport - The transport instance to add
    */
-  public addTransport(transport: Transport): void {
+  public addTransport(transport: Types.Transport.Transport): void {
     this.transports.push(transport);
   }
 
@@ -42,7 +41,7 @@ export class BufferManager {
    * Set all transports for the buffer manager
    * @param transports - Array of transport instances
    */
-  public setTransports(transports: Transport[]): void {
+  public setTransports(transports: Types.Transport.Transport[]): void {
     this.transports = transports;
   }
 
@@ -50,7 +49,7 @@ export class BufferManager {
    * Push a new event to the ring buffer
    * @param event - The telemetry event to add
    */
-  public pushEvent(event: TelemetryEvent): void {
+  public pushEvent(event: Types.Logger.TelemetryEvent): void {
     this.ringBuffer.push(event);
   }
 
@@ -59,7 +58,7 @@ export class BufferManager {
    * Processes events in batches of up to 50 events
    */
   private async flush(): Promise<void> {
-    const batch: TelemetryEvent[] = [];
+    const batch: Types.Logger.TelemetryEvent[] = [];
 
     // Pop up to maxBatchSize events from the ring buffer
     while (batch.length < this.MAX_BATCH_SIZE) {
